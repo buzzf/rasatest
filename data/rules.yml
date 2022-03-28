@@ -1,0 +1,43 @@
+version: "3.0"
+rules:
+  - rule: respond to FAQs
+    steps:
+      - intent: faq
+      - action: utter_faq
+  - rule: respond to Chats
+    steps:
+      - intent: chat
+      - action: utter_chat
+  - rule: nlu fallback
+    steps:
+      - intent: nlu_fallback
+      - action: action_default
+
+  - rule: activate weather form
+    steps:
+      - intent: request_weather
+      - action: weather_form
+      - active_loop: weather_form
+
+  - rule: Submit form
+    condition:
+      - active_loop: weather_form
+    steps:
+      - action: weather_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      # The action we want to run when the form is submitted.
+      - action: action_weather_form_submit
+
+  - rule: weather unhappy path
+    condition:
+      # Condition that form is active.
+      - active_loop: weather_form
+    steps:
+      # This unhappy path handles the case of an intent `chitchat`.
+      - intent: chat
+      - action: utter_chat
+      # Return to form after handling the `chitchat` intent
+      - action: weather_form
+      - active_loop: weather_form

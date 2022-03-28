@@ -1,0 +1,101 @@
+version: "3.0"
+
+intents:
+  - greet
+  - goodbye
+  - whoareyou
+  - whattodo
+  - thanks
+  - affirm
+  - deny
+  - chitchat
+  - query_time
+  - query_date
+  - query_weekday
+  - request_weather
+  - faq
+  - stop
+  - chat
+  - info_date
+  - info_address
+
+entities:
+  - date_time
+  - address
+
+slots:
+  date_time:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: date_time
+      conditions:
+        - active_loop: weather_form
+  address:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: address
+      conditions:
+        - active_loop: weather_form
+
+responses:
+  utter_greet:
+    - text: "你好~"
+    - text: "哈喽啊"
+  utter_goodbye:
+    - text: "再见啦"
+    - text: "拜拜~"
+  utter_whoareyou:
+    - text: "我是这里的服务机器人，有什么不清楚的可以问我哦~"
+  utter_whattodo:
+    - text: "我会查天气、陪你聊天"
+  utter_thanks:
+    - text: "不用客气啦~"
+  utter_chitchat:
+    - text: "我去问问小冰该怎么回答你"
+  utter_ask_address:
+    - text: 想查询哪里的天气呢？
+  utter_ask_date_time:
+    - text: 想查询什么时候的天气呢？
+  utter_ask_continue:
+    - text: 是否要继续？
+  utter_default:
+    - text: "你说的我还不会呢，你问个其他问题吧"
+    - text: "我正在学习人类的语言呢，问我点别的吧"
+
+actions:
+  - utter_greet
+  - utter_goodbye
+  - utter_whoareyou
+  - utter_whattodo
+  - utter_thanks
+  - utter_chitchat
+  - action_weather_form_submit
+  - utter_ask_date_time
+  - utter_ask_address
+  - utter_ask_continue
+  - utter_default
+  - action_default
+  - action_query_time
+  - action_query_date
+  - action_query_weekday
+  - validate_weather_form
+#  - respond_faq
+#  - respond_chat
+
+# 会话配置
+session_config:
+  session_expiration_time: 60   # 多久后会话过期
+  carry_over_slots_to_new_session: false  # 新的会话词槽是否继承上一轮会话的
+
+forms:
+  weather_form:
+    ignored_intents:
+      - query_date
+      - query_weekday
+    required_slots:
+      - address
+      - date_time
